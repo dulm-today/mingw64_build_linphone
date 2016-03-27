@@ -2,14 +2,13 @@
 
 . _util.sh
 
-: ${MINGW_ONLY_ARCH:="yes"}
 : ${MINGW_USE_MSYS2:="yes"}
 : ${MINGW_CONFIRM:="no"}
 
-ARCH="i686"
-
 if [ "$(getconf LONG_BIT)" == "64" ];then
-	ARCH="x86_64"
+	: ${ARCH:="x86_64"}
+else
+    : ${ARCH:="i686"}
 fi
 
 _regex_deal()
@@ -64,18 +63,18 @@ _group_install()
 }
 
 ## $1 list
-## $2 only_arch, yes: install current arch; no: install i686 && x86_64
-## $3 install_msys2, yes: install msys program while no arch_program; no: not install; true: allways install
+## $2 arch, i686 | x86_64 | cross | i686;x86_64;cross
+## $3 install_msys2, yes: install msys program while no arch program; no: not install; true: allways install
 ## $4 confirm, yes: --confirm; no: --noconfirm
 install_deps()
 {
+    local _each
 	local _package
 	local _package_msys
 	local _search
 	local _search_ret
 	local _search_i
 	local _arch
-	local _each
     local _guess
 	
 	for _each in $1
@@ -111,12 +110,8 @@ install_deps()
 			do
 				_arch="$(echo \"$_search_i\" | awk -F \- '{print $3}')"
                 _guess="mingw-w64-${_arch}-${_each}"
-				if [ "$ARCH" == "$_arch" -a "$_guess" == "$_search_i" ];then
-					# ARCH == _arch
-					_package+=" $_search_i"
-				elif [ "$_arch" == "i686" -a "$ARCH" == "x86_64" \
-                        -a "$_guess" == "$_search_i" -a "$2" != "yes" ];then
-					# x86_64 install i686
+                if [ -n "$(echo $2 | grep $_arch )" -a "$_guess" == "$_search_i" ];then
+					# _arch in ARCH
 					_package+=" $_search_i"
 				elif [ -z "$_arch" ];then
 					# install msys
