@@ -4,7 +4,7 @@
 DEPS_BASE="pkg-config zip unzip tar wget git curl"
 
 # auto build
-DEPS_BASE+=" intltool automake autoconf libtool"
+DEPS_BASE+=" intltool automake autoconf libtool make cmake"
 
 # text tools
 DEPS_BASE+=" sed awk grep gawk gettext less"

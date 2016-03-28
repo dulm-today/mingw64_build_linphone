@@ -10,4 +10,12 @@ else
     . _mingw.sh || exit 1
 fi
 
+if [ -n "$(echo $ARCH | grep i686)" ];then
+	DEPS_C_CPLUS+=" mingw-w64-i686-toolchain"
+elif [ -n "$(echo $ARCH | grep x86_64)" ];then
+	DEPS_C_CPLUS+=" mingw-w64-x86_64-toolchain"
+elif [ -n "$(echo $ARCH | grep cross)" ];then
+	DEPS_C_CPLUS+=" mingw-w64-cross-toolchain"
+fi
+
 install_deps "$DEPS_C_CPLUS" "$ARCH" "$MINGW_USE_MSYS2" "$MINGW_CONFIRM"
